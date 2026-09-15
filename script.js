@@ -2,10 +2,16 @@
   const CIRCUMFERENCE = 2 * Math.PI * 130; // 816.8...
 
   const modes = {
-    focus: { label: "Focus", color: "#ff6b5e", minutesInputId: "focusMin" },
-    short: { label: "Short Break", color: "#5ec2ff", minutesInputId: "shortMin" },
-    long: { label: "Long Break", color: "#8b7bff", minutesInputId: "longMin" },
+    focus: { label: "Focus", cssVar: "--accent-focus", minutesInputId: "focusMin" },
+    short: { label: "Short Break", cssVar: "--accent-short", minutesInputId: "shortMin" },
+    long: { label: "Long Break", cssVar: "--accent-long", minutesInputId: "longMin" },
   };
+
+  function getModeColor(mode) {
+    return getComputedStyle(document.documentElement)
+      .getPropertyValue(modes[mode].cssVar)
+      .trim();
+  }
 
   const el = {
     modeTabs: document.getElementById("modeTabs"),
@@ -89,7 +95,7 @@
         li.className = "log-item";
         li.innerHTML = `
           <span class="kind">
-            <span class="dot" style="background:${modes[entry.mode].color}"></span>
+            <span class="dot" style="background:${getModeColor(entry.mode)}"></span>
             ${modes[entry.mode].label}
           </span>
           <span class="time-stamp">${entry.time}</span>
@@ -142,8 +148,7 @@
 
   function applyMode(mode, resetTime = true) {
     state.mode = mode;
-    const color = modes[mode].color;
-    el.root.style.setProperty("--accent", color);
+    el.root.style.setProperty("--accent", getModeColor(mode));
 
     document.querySelectorAll(".mode-btn").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.mode === mode);
